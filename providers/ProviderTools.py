@@ -32,7 +32,15 @@ def convert_ya_to_spot(url: str, limit: int) -> list[TrackInfo]:
     """
     track = YANDEX_PROVIDER.get_track_by_url(url)
     query = f'{track.title} {track.albums[0]} {track.artists[0]}'
+    return search_spot(query, limit)
 
+def search_spot(query:str, limit: int) -> list[TrackInfo]:
+    """
+    Search spotify music by query
+    :param query:
+    :param limit:
+    :return: tracks info
+    """
     res = SPOTIFY_PROVIDER.search(query, limit=limit)
     return res
 

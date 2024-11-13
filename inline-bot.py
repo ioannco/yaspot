@@ -15,12 +15,14 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 import logging
+import re
 from uuid import uuid4
 
 from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
 from telegram.ext import Application, CommandHandler, ContextTypes, InlineQueryHandler
 
 from providers import init_providers, convert_ya_to_spot
+from providers.ProviderTools import search_spot
 
 # Enable logging
 logging.basicConfig(
@@ -31,6 +33,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
+yandex_url_regex = re.compile('.*music.yandex.ru.*')
 
 # Define a few command handlers. These usually take the two arguments update and
 # context.
@@ -51,7 +54,10 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if not query:  # empty query should not be handled
         return
 
-    res = convert_ya_to_spot(query, 5)
+    if yandex_url_regex.match(query):
+        res = convert_ya_to_spot(query, 5)
+    else:
+        res = search_spot(query, 5)
 
     results = [
         InlineQueryResultArticle(
