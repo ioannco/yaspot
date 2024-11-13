@@ -4,13 +4,15 @@ class TrackInfo:
     """
     Basic track information response
     """
-    def __init__(self, provider: str, id: str, title: str, artists: list[str], albums: list[str], url: str, provider_container: Any):
+    def __init__(self, provider: str, id: str, title: str, artists: list[str], albums: list[str], url: str, year: int, thumbnail: str, provider_container: Any):
         self.provider = provider
         self.id = id
         self.title = title
         self.artists = artists
         self.albums = albums
         self.url = url
+        self.year = year
+        self.thumbnail = thumbnail
         self.provider_container = provider_container
 
     def __str__(self):
@@ -22,6 +24,8 @@ class TrackInfo:
     artists: list[str]
     albums: list[str]
     url: str
+    year: int
+    thumbnail: str
     provider_container: Any
 
 class MusicProviderAPI:

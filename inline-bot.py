@@ -21,8 +21,7 @@ from uuid import uuid4
 from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
 from telegram.ext import Application, CommandHandler, ContextTypes, InlineQueryHandler
 
-from providers import init_providers, convert_ya_to_spot
-from providers.ProviderTools import search_spot
+from providers import init_providers, convert_ya_to_spot, MusicProviderAPI
 
 # Enable logging
 logging.basicConfig(
@@ -34,6 +33,9 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 yandex_url_regex = re.compile('.*music.yandex.ru.*')
+
+spotify = None
+yandex = None
 
 # Define a few command handlers. These usually take the two arguments update and
 # context.
@@ -59,23 +61,34 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if yandex_url_regex.match(query):
         res = convert_ya_to_spot(query, 5)
     else:
-        res = search_spot(query, 5)
+        provider: MusicProviderAPI
+        if query.startswith("$"):
+            query = query[1:]
+            provider = yandex
+        else:
+            provider = spotify
+
+        res = provider.search(query, 5)
 
     results = [
         InlineQueryResultArticle(
             id=str(uuid4()),
             title=f'{track.artists[0]} - {track.title}',
             input_message_content=InputTextMessageContent(track.url),
-            thumbnail_url=track.provider_container['album']['images'][2]['url']
+            thumbnail_url=track.thumbnail
         )
         for track in res
     ]
+
+    if not results:
+        return
 
     await update.inline_query.answer(results)
 
 
 def main() -> None:
-    credentials = init_providers()
+    global spotify, yandex
+    credentials, yandex, spotify = init_providers()
 
     """Run the bot."""
     # Create the Application and pass it your bot's token.

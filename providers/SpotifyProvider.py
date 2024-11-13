@@ -3,6 +3,20 @@ from spotipy import SpotifyOAuth, SpotifyClientCredentials, Spotify
 from providers import MusicProviderAPI, TrackInfo
 
 
+def _spotify_track_to_track_info(track: dict):
+    return TrackInfo(
+            "Spotify",
+            track['id'],
+            track['name'],
+            [artist['name'] for artist in track['artists']],
+            [track['album']['name']],
+            track['external_urls']['spotify'],
+            int(track['album']['release_date'][:4]),
+            track['album']['images'][2]['url'],
+            track
+    )
+
+
 class SpotifyProvider(MusicProviderAPI):
     def __init__(self, client_id: str, secret: str):
         super().__init__()
@@ -17,15 +31,7 @@ class SpotifyProvider(MusicProviderAPI):
 
     def search(self, query: str, limit: int = 10) -> list[TrackInfo]:
         res = self.client.search(query, limit=limit, type='track', market='NL')
-        return  [TrackInfo(
-            "Spotify",
-            track['id'],
-            track['name'],
-            [artist['name'] for artist in track['artists']],
-            [track['album']['name']],
-            track['external_urls']['spotify'],
-            track
-        ) for track in res['tracks']['items']]
+        return  [_spotify_track_to_track_info(track) for track in res['tracks']['items']]
 
 
 
