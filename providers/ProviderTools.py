@@ -6,10 +6,9 @@ from providers import YandexMusicProvider, SpotifyProvider, TrackInfo
 YANDEX_PROVIDER: YandexMusicProvider = None
 SPOTIFY_PROVIDER: SpotifyProvider = None
 
-
 def init_providers():
     """
-    Initialize providers `YANDDEX_PROVIDER` and `SPOTIFY_PROVIDER` and parse tokens
+    Initialize providers `YANDEX_PROVIDER` and `SPOTIFY_PROVIDER` and parse tokens
     :return: credentials
     """
     credentials = load_credentials()

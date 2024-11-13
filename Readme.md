@@ -2,7 +2,7 @@
 
 This is an inline telegram bot with search and url convert capabilities
 
-![preview](img.png)
+![preview](img.png) ![preview](img_1.png)
 
 ## Installation
 Before installation, you need to acquire Yandex Music token and Spotify 
