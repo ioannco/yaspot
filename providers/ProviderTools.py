@@ -1,8 +1,7 @@
 import json
 from typing import Union
 
-from providers import YandexMusicProvider, SpotifyProvider
-
+from providers import YandexMusicProvider, SpotifyProvider, TrackInfo
 
 YANDEX_PROVIDER: YandexMusicProvider = None
 SPOTIFY_PROVIDER: SpotifyProvider = None
@@ -24,20 +23,18 @@ def init_providers():
 
     return credentials
 
-def convert_ya_to_spot(url: str) -> str:
+def convert_ya_to_spot(url: str, limit: int) -> list[TrackInfo]:
     """
     Convert yandex track URL to spotify one
+    :param limit: tracks limit
     :param url: URL to the yandex track
-    :return: URL to the spotify track
+    :return: tracks info
     """
     track = YANDEX_PROVIDER.get_track_by_url(url)
     query = f'{track.title} {track.albums[0]} {track.artists[0]}'
 
-    res = SPOTIFY_PROVIDER.search(query, limit=1)
-    if len(res) == 1:
-        return res[0].url
-    return ""
-
+    res = SPOTIFY_PROVIDER.search(query, limit=limit)
+    return res
 
 def load_credentials() -> Union[dict[str, str], None]:
     """

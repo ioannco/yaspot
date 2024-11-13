@@ -36,12 +36,12 @@ logger = logging.getLogger(__name__)
 # context.
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
-    await update.message.reply_text("Hello! This is Yandex Music to Spotify url converter.")
+    await update.message.reply_text("Hello! This is Yandex Music to Spotify url inline converter. Usage: @yaspotconv_bot <track_url>")
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
-    await update.message.reply_text("Hello! This is Yandex Music to Spotify url converter.")
+    await update.message.reply_text("Hello! This is Yandex Music to Spotify url inline converter. Usage: @yaspotconv_bot <track_url>")
 
 
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -51,14 +51,16 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if not query:  # empty query should not be handled
         return
 
-    res = convert_ya_to_spot(query)
+    res = convert_ya_to_spot(query, 5)
 
     results = [
         InlineQueryResultArticle(
             id=str(uuid4()),
-            title="Caps",
-            input_message_content=InputTextMessageContent(res)
+            title=f'{track.artists[0]} - {track.title}',
+            input_message_content=InputTextMessageContent(track.url),
+            thumbnail_url=track.provider_container['album']['images'][2]['url']
         )
+        for track in res
     ]
 
     await update.inline_query.answer(results)
