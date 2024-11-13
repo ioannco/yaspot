@@ -1,6 +1,8 @@
 # Yandex Music to Spotify link converter telegram bot
 
-This is an inline telegram bot with search and url convert capabilitites
+This is an inline telegram bot with search and url convert capabilities
+
+![preview](img.png)
 
 ## Installation
 Before installation, you need to acquire Yandex Music token and Spotify 
