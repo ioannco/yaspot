@@ -15,12 +15,12 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 import logging
-from html import escape
 from uuid import uuid4
 
 from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
-from telegram.constants import ParseMode
 from telegram.ext import Application, CommandHandler, ContextTypes, InlineQueryHandler
+
+from providers import init_providers, convert_ya_to_spot
 
 # Enable logging
 logging.basicConfig(
@@ -51,35 +51,25 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if not query:  # empty query should not be handled
         return
 
+    res = convert_ya_to_spot(query)
+
     results = [
         InlineQueryResultArticle(
             id=str(uuid4()),
             title="Caps",
-            input_message_content=InputTextMessageContent(query.upper()),
-        ),
-        InlineQueryResultArticle(
-            id=str(uuid4()),
-            title="Bold",
-            input_message_content=InputTextMessageContent(
-                f"<b>{escape(query)}</b>", parse_mode=ParseMode.HTML
-            ),
-        ),
-        InlineQueryResultArticle(
-            id=str(uuid4()),
-            title="Italic",
-            input_message_content=InputTextMessageContent(
-                f"<i>{escape(query)}</i>", parse_mode=ParseMode.HTML
-            ),
-        ),
+            input_message_content=InputTextMessageContent(res)
+        )
     ]
 
     await update.inline_query.answer(results)
 
 
 def main() -> None:
+    credentials = init_providers()
+
     """Run the bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token("TOKEN").build()
+    application = Application.builder().token(credentials["TELEGRAM_TOKEN"]).build()
 
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler("start", start))
