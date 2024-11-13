@@ -11,7 +11,7 @@ def _yandex_track_to_track_info(track: Track) -> TrackInfo:
         track.title,
         [artist.name for artist in track.artists],
         [album.title for album in track.albums],
-        f'https://music.yanndex.ru/album/{track.albums[0].id}/track/{track.id}',
+        f'https://music.yandex.ru/album/{track.albums[0].id}/track/{track.id}',
         track.albums[0].year,
         track.cover_uri.replace('%%', '200x200'),
         track)
@@ -61,6 +61,6 @@ class YandexMusicProvider(MusicProviderAPI):
         """
         res = self.client.search(query, type_='track')
         if res.tracks:
-            return [_yandex_track_to_track_info(track) for track in res.tracks.results]
+            return [_yandex_track_to_track_info(track) for track in res.tracks.results][:limit]
         return []
 

@@ -22,6 +22,7 @@ from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
 from telegram.ext import Application, CommandHandler, ContextTypes, InlineQueryHandler
 
 from providers import init_providers, convert_ya_to_spot, MusicProviderAPI
+from providers.ProviderTools import convert_spot_to_ya
 
 # Enable logging
 logging.basicConfig(
@@ -33,6 +34,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 yandex_url_regex = re.compile('.*music.yandex.ru.*')
+spotify_url_regex = re.compile('.*spotify.com/track/.*')
 
 spotify = None
 yandex = None
@@ -60,6 +62,8 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     if yandex_url_regex.match(query):
         res = convert_ya_to_spot(query, 5)
+    elif spotify_url_regex.match(query):
+        res = convert_spot_to_ya(query, 5)
     else:
         provider: MusicProviderAPI
         if query.startswith("$"):

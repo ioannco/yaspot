@@ -33,7 +33,18 @@ def convert_ya_to_spot(url: str, limit: int) -> list[TrackInfo]:
     """
     track = YANDEX_PROVIDER.get_track_by_url(url)
     query = f'{track.title} {track.albums[0]} {track.artists[0]}'
-    return search(query, limit)
+    return SPOTIFY_PROVIDER.search(query, limit)
+
+def convert_spot_to_ya(url: str, limit: int) -> list[TrackInfo]:
+    """
+    Convert spotify track URL to yandex one
+    :param url: track URL
+    :param limit: tracks limit
+    :return: tracks info
+    """
+    track = SPOTIFY_PROVIDER.get_track_by_url(url)
+    query = f'{track.title} {track.albums[0]} {track.artists[0]}'
+    return YANDEX_PROVIDER.search(query, limit)
 
 def load_credentials() -> Union[dict[str, str], None]:
     """
