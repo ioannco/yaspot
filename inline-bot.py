@@ -36,12 +36,12 @@ logger = logging.getLogger(__name__)
 # context.
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
-    await update.message.reply_text("Hi!")
+    await update.message.reply_text("Hello! This is Yandex Music to Spotify url converter.")
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
-    await update.message.reply_text("Help!")
+    await update.message.reply_text("Hello! This is Yandex Music to Spotify url converter.")
 
 
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
