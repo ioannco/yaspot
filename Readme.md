@@ -1,4 +1,4 @@
-# Yandex Music to Spotify link converter telegram bot
+# Yandex to Spotify inline converter (ytsic) telegram bot
 
 This is an inline telegram bot with search and url convert capabilities
 
