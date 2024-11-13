@@ -39,12 +39,14 @@ yandex_url_regex = re.compile('.*music.yandex.ru.*')
 # context.
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
-    await update.message.reply_text("Hello! This is Yandex Music to Spotify url inline converter. Usage: @botusername <track_url>")
+    await update.message.reply_text("Hello! This is Yandex Music to Spotify url inline converter."
+                                    " Usage: @ytsicbot <track_url>")
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
-    await update.message.reply_text("Hello! This is Yandex Music to Spotify url inline converter. Usage: @botusername <track_url>")
+    await update.message.reply_text("Hello! This is Yandex Music to Spotify url inline converter. "
+                                    "Usage: @ytsicbot <track_url>")
 
 
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
