@@ -50,10 +50,11 @@ bot_description = ("This is Spotify inline search bot!\n\n"
                    f"convert yandex url to spotify url and vice versa!")
 
 def choose_provider_for_query(query: str) -> tuple[str, Union[SpotifyProvider, YandexMusicProvider]]:
-    query = query[1:]
     if query.startswith("$"):
+        query = query[1:]
         return query, yandex
     else:
+        query = query[1:]
         return query, spotify
 
 # Define a few command handlers. These usually take the two arguments update and
