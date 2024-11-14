@@ -45,7 +45,7 @@ source .env/bin/activate #for UNIX (run activate.ps2 for windows)
 pip install -r requirements.txt
 ```
 
-# Usage
+## Usage
 ```shell
 python inline-bot.py
 ```
