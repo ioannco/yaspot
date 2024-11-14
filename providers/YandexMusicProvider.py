@@ -6,7 +6,7 @@ from yandex_music import Client, Track
 
 def _yandex_track_to_track_info(track: Track) -> TrackInfo:
     return TrackInfo(
-        "YandexMusic",
+        "Yandex",
         track.track_id,
         track.title,
         [artist.name for artist in track.artists],

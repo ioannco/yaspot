@@ -37,6 +37,7 @@ logger = logging.getLogger(__name__)
 
 yandex_url_regex = re.compile('.*music.yandex.ru.*')
 spotify_url_regex = re.compile('.*spotify.com/track/.*')
+provider_tag_regex = re.compile('$.*|%.*')
 
 spotify: SpotifyProvider
 yandex: YandexMusicProvider
@@ -44,14 +45,14 @@ yandex: YandexMusicProvider
 counter: int = 0
 
 bot_description = ("This is Spotify inline search bot!\n\n"
-                   f"You can search for any track in spotify just by typing \n{SETTINGS.BOT_TAG} <track name>.\n\n"
-                   f"If you want to search for a track in yandex music, just add $ before the track name.\n\n"
+                   f"You can search for any track in both spotify and yandex just by typing \n{SETTINGS.BOT_TAG} <track name>.\n\n"
+                   f"If you want to search for a track in yandex music, just add $ before the track name. For spotify add %.\n\n"
                    f"This bot can also handle URL conversions. Just add url after the {SETTINGS.BOT_TAG} and the bot will "
                    f"convert yandex url to spotify url and vice versa!")
 
 def choose_provider_for_query(query: str) -> tuple[str, Union[SpotifyProvider, YandexMusicProvider]]:
+    query = query[1:]
     if query.startswith("$"):
-        query = query[1:]
         return query, yandex
     else:
         return query, spotify
@@ -83,9 +84,11 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         res = convert_ya_to_spot(query, 5)
     elif spotify_url_regex.match(query):
         res = convert_spot_to_ya(query, 5)
-    else:
+    elif provider_tag_regex.match(query):
         query, provider = choose_provider_for_query(query)
         res = provider.search(query, 5)
+    else:
+        res = spotify.search(query, 3) + yandex.search(query, 3)
 
     results = [
         InlineQueryResultArticle(
