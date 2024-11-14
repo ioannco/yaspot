@@ -47,7 +47,9 @@ bot_description = ("This is Spotify inline search bot!\n\n"
                    f"You can search for any track in both spotify and yandex just by typing \n{SETTINGS.BOT_TAG} <track name>.\n\n"
                    f"If you want to search for a track in yandex music, just add $ before the track name. For spotify add %.\n\n"
                    f"This bot can also handle URL conversions. Just add url after the {SETTINGS.BOT_TAG} and the bot will "
-                   f"convert yandex url to spotify url and vice versa!")
+                   f"convert yandex url to spotify url and vice versa!\n\n"
+                   f"You can support development of this bot by starring repo on github:\n"
+                   f"https://github.com/ioannco/ytsic")
 
 def choose_provider_for_query(query: str) -> tuple[str, Union[SpotifyProvider, YandexMusicProvider]]:
     if query.startswith("$"):
