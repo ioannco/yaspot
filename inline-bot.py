@@ -90,7 +90,7 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     results = [
         InlineQueryResultArticle(
             id=str(uuid4()),
-            title=f'{track.artists[0]} - {track.title}',
+            title=f'[{track.provider}] {", ".join(track.artists)} - {track.title}',
             input_message_content=InputTextMessageContent(track.url),
             thumbnail_url=track.thumbnail
         )
