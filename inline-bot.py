@@ -16,13 +16,15 @@ bot.
 """
 import logging
 import re
+from typing import Union
 from uuid import uuid4
 
 from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
 from telegram.ext import Application, CommandHandler, ContextTypes, InlineQueryHandler
 
-from providers import init_providers, convert_ya_to_spot, MusicProviderAPI
+from providers import init_providers, convert_ya_to_spot, MusicProviderAPI, SpotifyProvider, YandexMusicProvider
 from providers.ProviderTools import convert_spot_to_ya
+from settings import SETTINGS
 
 # Enable logging
 logging.basicConfig(
@@ -36,21 +38,29 @@ logger = logging.getLogger(__name__)
 yandex_url_regex = re.compile('.*music.yandex.ru.*')
 spotify_url_regex = re.compile('.*spotify.com/track/.*')
 
-spotify = None
-yandex = None
+spotify: SpotifyProvider
+yandex: YandexMusicProvider
+
+def choose_provider_for_query(query: str) -> tuple[str, Union[SpotifyProvider, YandexMusicProvider]]:
+    if query.startswith("$"):
+        query = query[1:]
+        return query, yandex
+    else:
+        return query, spotify
+
 
 # Define a few command handlers. These usually take the two arguments update and
 # context.
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
     await update.message.reply_text("Hello! This is Yandex Music to Spotify url inline converter."
-                                    " Usage: @ytsicbot <track_url>")
+                                    f" Usage: {SETTINGS.BOT_TAG} <track_url>")
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
     await update.message.reply_text("Hello! This is Yandex Music to Spotify url inline converter. "
-                                    "Usage: @ytsicbot <track_url>")
+                                    f"Usage: {SETTINGS.BOT_TAG} <track_url>")
 
 
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -65,13 +75,7 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     elif spotify_url_regex.match(query):
         res = convert_spot_to_ya(query, 5)
     else:
-        provider: MusicProviderAPI
-        if query.startswith("$"):
-            query = query[1:]
-            provider = yandex
-        else:
-            provider = spotify
-
+        query, provider = choose_provider_for_query(query)
         res = provider.search(query, 5)
 
     results = [
@@ -92,11 +96,11 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 def main() -> None:
     global spotify, yandex
-    credentials, yandex, spotify = init_providers()
+    yandex, spotify = init_providers()
 
     """Run the bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token(credentials["TELEGRAM_TOKEN"]).build()
+    application = Application.builder().token(SETTINGS.TELEGRAM_TOKEN).build()
 
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler("start", start))
