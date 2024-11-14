@@ -22,7 +22,7 @@ from uuid import uuid4
 from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
 from telegram.ext import Application, CommandHandler, ContextTypes, InlineQueryHandler
 
-from providers import init_providers, convert_ya_to_spot, MusicProviderAPI, SpotifyProvider, YandexMusicProvider
+from providers import init_providers, convert_ya_to_spot, SpotifyProvider, YandexMusicProvider
 from providers.ProviderTools import convert_spot_to_ya
 from settings import SETTINGS
 
@@ -41,6 +41,14 @@ spotify_url_regex = re.compile('.*spotify.com/track/.*')
 spotify: SpotifyProvider
 yandex: YandexMusicProvider
 
+counter: int = 0
+
+bot_description = ("This is Spotify inline search bot!\n\n"
+                   f"You can search for any track in spotify just by typing \n{SETTINGS.BOT_TAG} <track name>.\n\n"
+                   f"If you want to search for a track in yandex music, just add $ before the track name.\n\n"
+                   f"This bot can also handle URL conversions. Just add url after the {SETTINGS.BOT_TAG} and the bot will "
+                   f"convert yandex url to spotify url and vice versa!")
+
 def choose_provider_for_query(query: str) -> tuple[str, Union[SpotifyProvider, YandexMusicProvider]]:
     if query.startswith("$"):
         query = query[1:]
@@ -48,24 +56,25 @@ def choose_provider_for_query(query: str) -> tuple[str, Union[SpotifyProvider, Y
     else:
         return query, spotify
 
-
 # Define a few command handlers. These usually take the two arguments update and
 # context.
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
-    await update.message.reply_text("Hello! This is Yandex Music to Spotify url inline converter."
-                                    f" Usage: {SETTINGS.BOT_TAG} <track_url>")
+    await update.message.reply_text(bot_description)
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
-    await update.message.reply_text("Hello! This is Yandex Music to Spotify url inline converter. "
-                                    f"Usage: {SETTINGS.BOT_TAG} <track_url>")
+    await update.message.reply_text(bot_description)
 
 
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the inline query. This is run when you type: @botusername <query>"""
     query = update.inline_query.query
+
+    global counter
+    print("counter", counter)
+    counter += 1
 
     if not query:  # empty query should not be handled
         return
