@@ -37,7 +37,6 @@ logger = logging.getLogger(__name__)
 
 yandex_url_regex = re.compile('.*music.yandex.ru.*')
 spotify_url_regex = re.compile('.*spotify.com/track/.*')
-provider_tag_regex = re.compile('$.*|%.*')
 
 spotify: SpotifyProvider
 yandex: YandexMusicProvider
@@ -84,7 +83,7 @@ async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         res = convert_ya_to_spot(query, 5)
     elif spotify_url_regex.match(query):
         res = convert_spot_to_ya(query, 5)
-    elif provider_tag_regex.match(query):
+    elif query.startswith("%") or query.startswith("$"):
         query, provider = choose_provider_for_query(query)
         res = provider.search(query, 5)
     else:
